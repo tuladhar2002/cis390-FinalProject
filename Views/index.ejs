@@ -1,0 +1,37 @@
+<%- include("partials/header.ejs") %>
+    <form id="loginForm" class="Client-login" action="/login" method="POST">
+      <img
+        class="mb-4"
+        src="/images/Lets-Chat-logo.png"
+        alt=""
+        width="150"
+        height="100"
+      />
+      <h1 class="h3 mb-3 fw-normal">Enter Into Chat Room!</h1>
+
+      <div class="form-floating">
+        <input
+          type="username"
+          class="form-control"
+          id="floatingPassword"
+          placeholder="name"
+          name="username"
+        />
+        <label for="floatingInput">Username</label>
+      </div>
+      <!-- AUth password input -->
+      <!-- <div class="form-floating">
+        <input
+          type="password"
+          class="form-control"
+          id="floatingPassword"
+          placeholder="Password"
+        />
+        <label for="floatingPassword">Password</label>
+      </div> -->
+      <button class="btn btn-primary w-100 py-2 mt-2" type="submit">
+        Start Chatting!
+      </button>
+    </form>
+  
+<%- include("partials/footer.ejs") %>
