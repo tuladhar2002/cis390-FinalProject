@@ -1,3 +1,4 @@
+const generateRoomId = require("./roomIdGenerator");
 const express = require("express");
 const app = express();
 const http = require("http");
@@ -15,6 +16,11 @@ app.use(express.urlencoded({ extended: true }));
 var usernames = [];
 const activeUsers = {}; // Object to store active users
 
+//demo room id created
+var roomIds = [];
+var currentRoomId;
+roomIds.push("1234");
+
 const sessionMiddleware = session({
   secret: "randomText",
   resave: true,
@@ -31,9 +37,30 @@ app.get("/", (req, res) => {
 // Handle login
 app.post("/login", async (req, res) => {
   const username = req.body.username;
-  req.session.username = username; // Store username in session
-  activeUsers[username] = true; // Mark user as active
-  res.render(__dirname + "/Views/chatBody.ejs");
+
+  // join existing chat room
+  if (req.body.roomId) {
+    const requestRoomId = req.body.roomId;
+    // check if roomId exists
+    if (roomIds.includes(requestRoomId)) {
+      currentRoomId = requestRoomId;
+      req.session.username = username; // Store username in session
+      activeUsers[username] = true; // Mark user as active
+      res.render(__dirname + "/Views/chatBody.ejs");
+    } else {
+      // provided chat room does not exists
+      console.log("roomId does not exists");
+    }
+  } 
+  else {
+    // generate a chat room and join
+    currentRoomId = generateRoomId();
+    console.log(currentRoomId);
+    roomIds.push(currentRoomId);
+    req.session.username = username; // Store username in session
+    activeUsers[username] = true; // Mark user as active
+    res.render(__dirname + "/Views/chatBody.ejs");
+  }
 });
 
 // Connection event listeners
@@ -45,24 +72,29 @@ io.use((socket, next) => {
 io.on("connection", async (socket) => {
   const session = socket.request.session;
   const username = session.username;
-  
 
-  // Notify all clients when user joins
-  if(!usernames.includes(username)){
-    io.emit("user joined", username);
-    usernames.push(username);
-  };
+  if (currentRoomId) {
+    // check user input room id in list
+    socket.join(currentRoomId);
+    // Notify all clients when user joins
+    if (!usernames.includes(username)) {
+      io.sockets.in(currentRoomId).emit("user joined", username);
+      usernames.push(username);
+    }
+  }
 
   // Disconnect
   socket.on("disconnect", () => {
     delete activeUsers[username]; // Remove user from active users
-    
+
     io.emit("user left", username); // Notify clients about user leaving
   });
 
   // Client sends message
   socket.on("chat message", (msg) => {
-    io.emit("chat message", { username, message: msg });
+    io.sockets
+      .to(currentRoomId)
+      .emit("chat message", { username, message: msg });
   });
 });
 

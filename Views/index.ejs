@@ -1,37 +1,86 @@
 <%- include("partials/header.ejs") %>
-    <form id="loginForm" class="Client-login" action="/login" method="POST">
-      <img
-        class="mb-4"
-        src="/images/Lets-Chat-logo.png"
-        alt=""
-        width="150"
-        height="100"
-      />
-      <h1 class="h3 mb-3 fw-normal">Enter Into Chat Room!</h1>
+<form id="loginForm" class="Client-login" action="/login" method="POST">
+  <img
+    class="mb-4"
+    src="/images/Lets-Chat-logo.png"
+    alt=""
+    width="150"
+    height="100"
+  />
+  <h1 class="h3 mb-3 fw-normal">Enter Into Chat Room!</h1>
 
-      <div class="form-floating">
-        <input
-          type="username"
-          class="form-control"
-          id="floatingPassword"
-          placeholder="name"
-          name="username"
-        />
-        <label for="floatingInput">Username</label>
-      </div>
-      <!-- AUth password input -->
-      <!-- <div class="form-floating">
-        <input
-          type="password"
-          class="form-control"
-          id="floatingPassword"
-          placeholder="Password"
-        />
-        <label for="floatingPassword">Password</label>
-      </div> -->
-      <button class="btn btn-primary w-100 py-2 mt-2" type="submit">
-        Start Chatting!
-      </button>
-    </form>
-  
+  <div class="form-floating">
+    <input
+      type="username"
+      class="form-control"
+      id="floatingPassword"
+      placeholder="name"
+      name="username"
+    />
+    <label for="floatingInput">Username</label>
+  </div>
+  <!-- Radio buttons for selecting chat room option -->
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="radio"
+      name="chatOption"
+      id="joinExisting"
+      value="joinExisting"
+      checked
+    />
+    <label class="form-check-label" for="joinExisting">
+      Join Existing Chat Room
+    </label>
+  </div>
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="radio"
+      name="chatOption"
+      id="createAndJoin"
+      value="createAndJoin"
+    />
+    <label class="form-check-label" for="createAndJoin">
+      Create and Join Chat Room
+    </label>
+  </div>
+
+  <!-- roomId input -->
+  <div class="form-floating" id="roomIdInput">
+    <input
+      type="string"
+      class="form-control"
+      id="roomId"
+      placeholder="roomId"
+      name="roomId"
+    />
+    <label for="roomId">Room Id</label>
+  </div>
+  <button class="btn btn-primary w-100 py-2 mt-2" type="submit">
+    Start Chatting!
+  </button>
+</form>
+
+<script>
+  // Function to toggle visibility of roomId input field
+  function toggleRoomIdInput() {
+    var roomIdInput = document.getElementById("roomIdInput");
+    var joinExisting = document.getElementById("joinExisting");
+
+    if (joinExisting.checked) {
+      roomIdInput.style.display = "block";
+    } else {
+      roomIdInput.style.display = "none";
+    }
+  }
+
+  // Call toggleRoomIdInput function on page load and when radio buttons are clicked
+  document.addEventListener("DOMContentLoaded", function() {
+    toggleRoomIdInput();
+    document.getElementById("joinExisting").addEventListener("click", toggleRoomIdInput);
+    document.getElementById("createAndJoin").addEventListener("click", toggleRoomIdInput);
+  });
+</script>
+
 <%- include("partials/footer.ejs") %>
