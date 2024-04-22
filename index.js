@@ -31,7 +31,7 @@ app.use(sessionMiddleware);
 
 // Login landing page render
 app.get("/", (req, res) => {
-  res.render(__dirname + "/Views/index.ejs");
+  res.render(__dirname + "/Views/login.ejs");
 });
 
 // Handle login
@@ -46,10 +46,14 @@ app.post("/login", async (req, res) => {
       currentRoomId = requestRoomId;
       req.session.username = username; // Store username in session
       activeUsers[username] = true; // Mark user as active
-      res.render(__dirname + "/Views/chatBody.ejs");
+      res.render(__dirname + "/Views/chatBody.ejs", {
+        roomId: currentRoomId,
+      });
     } else {
       // provided chat room does not exists
-      console.log("roomId does not exists");
+      res.render(__dirname+ "/Views/login.ejs", {
+        failure: "The provided room Id does not exists. Try a valid one!"
+      });
     }
   } 
   else {
@@ -59,7 +63,9 @@ app.post("/login", async (req, res) => {
     roomIds.push(currentRoomId);
     req.session.username = username; // Store username in session
     activeUsers[username] = true; // Mark user as active
-    res.render(__dirname + "/Views/chatBody.ejs");
+    res.render(__dirname + "/Views/chatBody.ejs", {
+      roomId: currentRoomId,
+    });
   }
 });
 
@@ -71,7 +77,7 @@ io.use((socket, next) => {
 // Connection event listeners
 io.on("connection", async (socket) => {
   const session = socket.request.session;
-  const username = session.username;
+  var username = session.username;
 
   if (currentRoomId) {
     // check user input room id in list
@@ -79,14 +85,16 @@ io.on("connection", async (socket) => {
     // Notify all clients when user joins
     if (!usernames.includes(username)) {
       io.sockets.in(currentRoomId).emit("user joined", username);
+      console.log(username + " joined chat room: "+ currentRoomId)
       usernames.push(username);
+      username = null; // clear out username var for next user
     }
   }
 
   // Disconnect
   socket.on("disconnect", () => {
     delete activeUsers[username]; // Remove user from active users
-
+    console.log(username+" disconnected from room: "+currentRoomId);
     io.emit("user left", username); // Notify clients about user leaving
   });
 

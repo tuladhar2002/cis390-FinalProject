@@ -8,7 +8,10 @@
     height="100"
   />
   <h1 class="h3 mb-3 fw-normal">Enter Into Chat Room!</h1>
-
+  <!-- EJS to view failure-->
+  <% if(locals.failure){%>
+  <h6 style="color: rgb(211, 38, 38)"><%=locals.failure %></h6>
+  <% } %>
   <div class="form-floating">
     <input
       type="username"
@@ -76,10 +79,14 @@
   }
 
   // Call toggleRoomIdInput function on page load and when radio buttons are clicked
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function () {
     toggleRoomIdInput();
-    document.getElementById("joinExisting").addEventListener("click", toggleRoomIdInput);
-    document.getElementById("createAndJoin").addEventListener("click", toggleRoomIdInput);
+    document
+      .getElementById("joinExisting")
+      .addEventListener("click", toggleRoomIdInput);
+    document
+      .getElementById("createAndJoin")
+      .addEventListener("click", toggleRoomIdInput);
   });
 </script>
 
