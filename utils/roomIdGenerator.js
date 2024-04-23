@@ -1,12 +1,10 @@
-// roomIdGenerator.js
-
 // Array to store generated room IDs
 let generatedRoomIds = [];
 
 // Function to generate a random room ID
 function generateRoomId() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // Letters to choose from
-  const length = 5; // Length of the room ID
+  const length = 5; // Length 
   
   let roomId = '';
 
