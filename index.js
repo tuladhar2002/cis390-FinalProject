@@ -77,7 +77,7 @@ io.use((socket, next) => {
 // Connection event listeners
 io.on("connection", async (socket) => {
   const session = socket.request.session;
-  var username = session.username;
+  const username = session.username;
 
   if (currentRoomId) {
     // check user input room id in list
@@ -87,14 +87,12 @@ io.on("connection", async (socket) => {
       io.sockets.in(currentRoomId).emit("user joined", username);
       console.log(username + " joined chat room: "+ currentRoomId)
       usernames.push(username);
-      username = null; // clear out username var for next user
     }
   }
 
   // Disconnect
   socket.on("disconnect", () => {
     delete activeUsers[username]; // Remove user from active users
-    console.log(username+" disconnected from room: "+currentRoomId);
     io.emit("user left", username); // Notify clients about user leaving
   });
 
